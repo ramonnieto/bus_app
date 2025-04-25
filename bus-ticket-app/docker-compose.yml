@@ -1,0 +1,47 @@
+##  docker-compose.exe build .\docker-compose.yml
+services:
+  # Servicio de Nginx (Proxy Inverso + Frontend)
+  proxy:
+    image: bus-ticket-app-proxy
+    ports:
+      - "80:80"  # Accesible desde el host en http://localhost
+    depends_on:
+      - user-auth
+      - bus-reservation
+      - payment-gateway
+      - route-scheduler
+    networks:
+      - app-network
+
+  user-auth:
+    image: bus-ticket-app-user-auth
+    ports:
+      - "5001:5001"
+    networks:
+      - app-network
+      
+  bus-reservation:
+    image: bus-ticket-app-payment-gateway
+    ports:
+      - "5002:5002"
+    networks:
+      - app-network
+      
+  payment-gateway:
+    image: bus-ticket-app-bus-reservation
+    ports:
+      - "5003:5003"
+    networks:
+      - app-network
+
+  route-scheduler:
+    image: bus-ticket-app-route-scheduler
+    ports:
+      - "5004:5004"
+    networks:
+      - app-network
+      
+networks:
+  app-network:
+    external: true
+    #network: red-psoe
